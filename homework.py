@@ -25,6 +25,7 @@ class Training:
     """Базовый класс тренировки."""
     LEN_STEP: float = 0.65
     M_IN_KM: float = 1000
+    H_IN_MIN: float = 60
 
     def __init__(self,
                  action: float,
@@ -60,7 +61,6 @@ class Running(Training):
     """Тренировка: бег."""
     RUN_COEF_CALORIE_1: float = 18
     RUN_COEF_CALORIE_2: float = 20
-    H_IN_MIN: float = 60
 
     def get_spent_calories(self) -> float:
         """Получить количество затраченных калорий при беге."""
@@ -77,7 +77,6 @@ class SportsWalking(Training):
     """Тренировка: спортивная ходьба."""
     SW_COEF_CALORIE_1: float = 0.035
     SW_COEF_CALORIE_2: float = 0.029
-    H_IN_MIN: float = 60
 
     def __init__(self,
                  action: float,
@@ -136,12 +135,13 @@ class Swimming(Training):
 
 def read_package(workout_type: str, data: List[float]) -> Training:
     """Прочитать данные полученные от датчиков."""
-    training_dict: Dict[str, Type] = {
+    training_dict: Dict[str, Type[Training]] = {
         'SWM': Swimming,
         'RUN': Running,
         'WLK': SportsWalking}
     if workout_type not in training_dict:
-        raise KeyError(f'{workout_type} - Такой тренировки не существует')
+        raise KeyError(f'{workout_type} - Такой тренировки не существует, '
+                       f'ожидается {",".join(training_dict)}')
     return training_dict[workout_type](*data)
 
 
@@ -155,6 +155,7 @@ if __name__ == '__main__':
         ('SWM', [720, 1, 80, 25, 40]),
         ('RUN', [15000, 1, 75]),
         ('WLK', [9000, 1, 75, 180]),
+        ('SKI', [10000, 1, 87])
     ]
 
     for workout_type, data in packages:
